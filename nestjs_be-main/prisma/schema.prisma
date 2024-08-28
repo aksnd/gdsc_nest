@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id          String        @id
+  nickname    String
+  conquerInfo conquerInfo[]
+}
+
+model mountain {
+  id Int  @id @default(autoincrement())
+  name String
+  latitude Float
+  longitude Float
+  imageLink String?
+  level Int
+  conquerInfo conquerInfo[]
+}
+
+model conquerInfo {
+  imageLink   String
+  conquerDate DateTime @default(now())
+  mountainId  Int
+  userId      String
+  mountain    mountain @relation(fields: [mountainId], references: [id])
+  Users       Users    @relation(fields: [userId], references: [id])
+
+  @@id([userId, mountainId])
+  @@index([mountainId], map: "conquerInfo_mountainId_fkey")
+}
